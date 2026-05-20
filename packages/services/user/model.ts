@@ -16,19 +16,11 @@ export const passwordSchema = z
   .regex(/[A-Za-z]/, "Password must include at least one letter")
   .regex(/\d/, "Password must include at least one number");
 
-export const signUpInputSchema = z
-  .object({
-    email: z.email().max(255).transform((value) => value.toLowerCase()),
-    password: passwordSchema,
-    fullName: z.string().trim().min(1).max(80),
-  })
-  .refine(({ email, password }) => {
-    const localPart = email.split("@")[0];
-    return !localPart || !password.toLowerCase().includes(localPart.toLowerCase());
-  }, {
-    message: "Password cannot contain the email username",
-    path: ["password"],
-  });
+export const signUpInputSchema = z.object({
+  email: z.email().max(255).transform((value) => value.toLowerCase()),
+  password: passwordSchema,
+  fullName: z.string().trim().min(1).max(80),
+});
 
 export const signInInputSchema = z.object({
   email: z.email().max(255).transform((value) => value.toLowerCase()),

@@ -63,6 +63,11 @@ class UserService {
     password: string;
     fullName: string;
   }): Promise<SelectUser> {
+    const localPart = input.email.split("@")[0];
+    if (localPart && input.password.toLowerCase().includes(localPart.toLowerCase())) {
+      throw new UserServiceError("BAD_REQUEST", "Password cannot contain the email username");
+    }
+
     const existing = await this.findByEmail(input.email);
     const passwordHash = await bcrypt.hash(input.password, 10);
 
