@@ -11,10 +11,26 @@ function createServerLink(opts?: { enableStreaming?: boolean }) {
 
   return createLink({
     url: getServerApiUrl(),
-    fetch(url, options) {
+    async fetch(url, options) {
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore
+          .getAll()
+          .map((c) => `${c.name}=${c.value}`)
+          .join("; ");
+      } catch {
+        // Not in a request context (e.g. during static generation)
+      }
+
       return fetch(url, {
         ...options,
-        credentials: "include",
+        cache: "no-store",
+        headers: {
+          ...(options?.headers as Record<string, string>),
+          ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+        },
       });
     },
   });
