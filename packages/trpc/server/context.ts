@@ -13,6 +13,8 @@ type CookieOptions = {
 
 type RequestLike = {
   cookies?: Record<string, string | undefined>;
+  ip?: string;
+  headers?: Record<string, string | string[] | undefined>;
 };
 
 type ResponseLike = {
@@ -46,6 +48,11 @@ export async function createContext(opts?: { req?: RequestLike; res?: ResponseLi
 
   return {
     user,
+    ip: opts?.req?.ip ?? "unknown",
+    userAgent:
+      typeof opts?.req?.headers?.["user-agent"] === "string"
+        ? opts.req.headers["user-agent"]
+        : null,
     setSessionCookie(tokenToSet: string) {
       opts?.res?.cookie(env.SESSION_COOKIE_NAME, tokenToSet, getCookieOptions());
     },

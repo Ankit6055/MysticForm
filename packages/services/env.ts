@@ -5,6 +5,7 @@ const envSchema = z.object({
   GOOGLE_OAUTH_CLIENT_SECRET: z.string().optional(),
   GOOGLE_OAUTH_REDIRECT_URI: z.string().optional(),
   JWT_SECRET: z.string().min(32),
+  IP_HASH_SALT: z.string().min(16).default("local-dev-ip-hash-salt-change-me"),
   SESSION_COOKIE_NAME: z.string().default("mf_session"),
   SESSION_TTL_DAYS: z.coerce.number().int().positive().default(30),
 });

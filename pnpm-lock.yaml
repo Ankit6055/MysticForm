@@ -401,6 +401,9 @@ importers:
       '@repo/logger':
         specifier: workspace:*
         version: link:../logger
+      '@repo/schemas':
+        specifier: workspace:^
+        version: link:../schemas
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -435,6 +438,9 @@ importers:
       '@repo/database':
         specifier: workspace:*
         version: link:../database
+      '@repo/schemas':
+        specifier: workspace:^
+        version: link:../schemas
       '@repo/services':
         specifier: workspace:*
         version: link:../services

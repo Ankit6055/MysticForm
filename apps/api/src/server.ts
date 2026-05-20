@@ -15,6 +15,8 @@ import { env as serviceEnv } from "@repo/services/env";
 import { env } from "./env";
 
 export const app = express();
+app.set("trust proxy", 1);
+
 const userService = new UserService();
 const openApiDocument = generateOpenApiDocument(serverRouter, {
   title: "MysticForm OpenAPI",
