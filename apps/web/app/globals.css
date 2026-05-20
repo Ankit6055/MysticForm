@@ -151,3 +151,12 @@
   animation: auth-fade-up 0.6s ease-out both;
   animation-delay: var(--fade-delay, 0s);
 }
+
+@keyframes dash-check {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes dash-circle {
+  from { stroke-dasharray: 0 138; }
+  to   { stroke-dasharray: 138 138; }
+}

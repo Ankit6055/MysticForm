@@ -31,7 +31,18 @@ const signUpSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-  });
+  })
+  .refine(
+    (data) => {
+      const localPart = data.email.split("@")[0];
+      if (!localPart) return true;
+      return !data.password.toLowerCase().includes(localPart.toLowerCase());
+    },
+    {
+      message: "Password cannot include your email username",
+      path: ["password"],
+    },
+  );
 
 type SignInValues = z.infer<typeof signInSchema>;
 type SignUpValues = z.infer<typeof signUpSchema>;
@@ -179,6 +190,8 @@ function SignUpForm({ next }: { next?: string }) {
     onError: (err) => {
       if (err.data?.code === "CONFLICT") {
         setAuthError("An account with this email already exists. Try signing in.");
+      } else if (err.data?.code === "BAD_REQUEST") {
+        setAuthError(err.message ?? "Invalid input. Please check your details.");
       } else {
         toast.error(err.message ?? "Something went wrong. Try again.");
       }

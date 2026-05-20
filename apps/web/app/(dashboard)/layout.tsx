@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Sparkles, LayoutGrid, MessageSquare, Compass, Settings } from "lucide-react";
+import { Sparkles, LayoutGrid, MessageSquare, Compass, Settings, LayoutTemplate } from "lucide-react";
 import { api } from "~/trpc/server";
 import { SignOutButton } from "~/components/sign-out-button";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutGrid, label: "Forms" },
+  { href: "/templates", icon: LayoutTemplate, label: "Templates" },
   { href: "/dashboard/responses", icon: MessageSquare, label: "Responses" },
   { href: "/explore", icon: Compass, label: "Explore" },
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
