@@ -13,8 +13,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Streamyst",
-  description: "Media Forwarding",
+  title: "MysticForm",
+  description: "Form builder",
 };
 
 export default function RootLayout({
