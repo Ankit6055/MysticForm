@@ -3,7 +3,7 @@
   "display": "Node JS",
   "extends": "./base.json",
   "compilerOptions": {
-    "moduleResolution": "Node",
-    "module": "CommonJS"
+    "moduleResolution": "Node16",
+    "module": "Node16"
   }
 }

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@repo/logger": "workspace:*",
+    "@repo/schemas": "workspace:^",
     "@repo/services": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@scalar/express-api-reference": "^0.8.30",

@@ -15,6 +15,13 @@
       "when": 1779297300000,
       "tag": "0001_auth_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779301227992,
+      "tag": "0002_forms_schema",
+      "breakpoints": true
     }
   ]
 }
