@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  GOOGLE_OAUTH_CLIENT_ID: z.string(),
-  GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
-  GOOGLE_OAUTH_REDIRECT_URI: z.string(),
+  GOOGLE_OAUTH_CLIENT_ID: z.string().optional(),
+  GOOGLE_OAUTH_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_OAUTH_REDIRECT_URI: z.string().optional(),
+  JWT_SECRET: z.string().min(32),
+  SESSION_COOKIE_NAME: z.string().default("mf_session"),
+  SESSION_TTL_DAYS: z.coerce.number().int().positive().default(30),
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {
