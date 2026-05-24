@@ -39,6 +39,14 @@ export const exploreRouter = router({
       const result = await exploreService.featured({ limit: input?.limit ?? 12 });
       return result.items;
     }),
+  templates: publicProcedure
+    .meta({ openapi: { method: "GET", path: getPath("/templates"), tags: TAGS } })
+    .input(z.object({ limit: exploreLimitSchema }).optional())
+    .output(z.array(exploreCardSchema))
+    .query(async ({ input }) => {
+      const result = await exploreService.templates({ limit: input?.limit ?? 50 });
+      return result.items;
+    }),
   byTheme: publicProcedure
     .meta({ openapi: { method: "GET", path: getPath("/theme/{themeSlug}"), tags: TAGS } })
     .input(

@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { trpc } from "~/trpc/client";
 import { PublicFormPage } from "./public-form-page";
-import type { ThemeTokens } from "./public-form-page";
 
 interface PasswordPromptProps {
   slug: string;
@@ -34,26 +33,24 @@ export function PasswordPrompt({ slug }: PasswordPromptProps) {
   }
 
   // If the query errored after submitting → wrong password
-  if (submitted && error) {
+  useEffect(() => {
+    if (!submitted || !error) return;
     const code = (error as { data?: { code?: string } })?.data?.code;
-    if (code === "FORBIDDEN" && !wrongPassword) {
+    if (code === "UNAUTHORIZED" || code === "BAD_REQUEST") {
       setWrongPassword(true);
       setSubmitted(false);
     }
-  }
+  }, [error, submitted]);
 
   // Successfully fetched form with password → render it
   if (data) {
-    const theme = data.form.themeId
-      ? null // theme loaded separately in page.tsx
-      : null;
     return (
       <PublicFormPage
         form={data.form}
         fields={data.fields}
         slug={slug}
         password={password}
-        theme={theme}
+        theme={null}
       />
     );
   }
@@ -68,9 +65,7 @@ export function PasswordPrompt({ slug }: PasswordPromptProps) {
           </div>
         </div>
 
-        <h1 className="mb-2 text-center text-2xl font-semibold text-[#1a1812]">
-          Protected form
-        </h1>
+        <h1 className="mb-2 text-center text-2xl font-semibold text-[#1a1812]">Protected form</h1>
         <p className="mb-8 text-center text-sm text-[#7a7060]">
           This form requires a password to access.
         </p>

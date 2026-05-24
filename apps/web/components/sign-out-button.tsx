@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react";
 import { trpc } from "~/trpc/client";
 import { Button } from "~/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
+import { toast } from "sonner";
 
 interface SignOutButtonProps {
   className?: string;
@@ -17,16 +17,18 @@ export function SignOutButton({ className }: SignOutButtonProps) {
 
   const signOut = trpc.auth.signOut.useMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getQueryKey(trpc.auth.me) });
+      queryClient.clear();
       router.replace("/login");
+      router.refresh();
     },
+    onError: (err) => toast.error(err.message ?? "Failed to sign out"),
   });
 
   return (
     <Button
       variant="ghost"
       size="sm"
-      onClick={() => signOut.mutate()}
+      onClick={() => signOut.mutate({})}
       disabled={signOut.isPending}
       className={className}
     >

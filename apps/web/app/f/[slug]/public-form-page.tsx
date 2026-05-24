@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { Loader2, RotateCcw, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "~/trpc/client";
 import { FieldRenderer } from "~/components/form-renderer/field-renderer";
-import { buildResponseSchema } from "@repo/schemas";
 import type { BuilderField } from "~/hooks/use-form-builder";
 import type { RouterOutputs } from "@repo/trpc/client";
-import type { FormField } from "@repo/schemas";
 
 type PublicForm = RouterOutputs["forms"]["getPublic"]["form"];
 type PublicField = RouterOutputs["forms"]["getPublic"]["fields"][number];
@@ -52,6 +50,33 @@ function prepareAnswers(
     }
   }
   return out;
+}
+
+function validateAnswers(values: Record<string, unknown>, fields: PublicField[]) {
+  const errors: Record<string, string> = {};
+
+  for (const field of fields) {
+    const value = values[field.id];
+    const isEmpty =
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0);
+
+    if (field.required && isEmpty) {
+      errors[field.id] = "This field is required";
+      continue;
+    }
+
+    if (isEmpty) continue;
+
+    if (field.type === "email" && typeof value === "string") {
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      if (!isEmail) errors[field.id] = "Enter a valid email address";
+    }
+  }
+
+  return errors;
 }
 
 // ── Thank-you screen ──────────────────────────────────────────────────────────
@@ -137,7 +162,6 @@ export function PublicFormPage({ form, fields, slug, password, theme }: PublicFo
   const [submitted, setSubmitted] = useState(false);
   const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
-  const firstErrorRef = useRef<string | null>(null);
 
   const accent = theme?.accent ?? "#0f0e0b";
   const accentFg = theme?.accentForeground ?? "#f4c95d";
@@ -176,40 +200,16 @@ export function PublicFormPage({ form, fields, slug, password, theme }: PublicFo
 
     const prepared = prepareAnswers(values, fields);
 
-    // Client-side validation with buildResponseSchema
-    const newErrors: Record<string, string> = {};
-    try {
-      const schema = buildResponseSchema(builderFields as unknown as FormField[]);
-      const result = schema.safeParse(prepared);
-      if (!result.success) {
-        for (const issue of result.error.issues) {
-          const id = issue.path[0] as string;
-          if (id && !newErrors[id]) newErrors[id] = issue.message;
-        }
-      }
-    } catch {
-      // Fallback: manual required check
-      for (const field of fields) {
-        if (field.required) {
-          const v = prepared[field.id];
-          if (
-            v === undefined ||
-            v === null ||
-            v === "" ||
-            (Array.isArray(v) && v.length === 0)
-          ) {
-            newErrors[field.id] = "This field is required";
-          }
-        }
-      }
-    }
+    const newErrors = validateAnswers(prepared, fields);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       // Scroll to first error
       const firstId = fields.find((f) => newErrors[f.id])?.id;
       if (firstId) {
-        document.getElementById(`field-${firstId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document
+          .getElementById(`field-${firstId}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
     }
@@ -256,9 +256,7 @@ export function PublicFormPage({ form, fields, slug, password, theme }: PublicFo
       <div className="mx-auto max-w-[640px] px-6 pb-20 pt-16 sm:px-8">
         {/* Cover header */}
         <header className="mb-12">
-          {form.coverEmoji && (
-            <div className="mb-5 text-5xl leading-none">{form.coverEmoji}</div>
-          )}
+          {form.coverEmoji && <div className="mb-5 text-5xl leading-none">{form.coverEmoji}</div>}
           <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             {form.title}
           </h1>
@@ -279,7 +277,7 @@ export function PublicFormPage({ form, fields, slug, password, theme }: PublicFo
             autoComplete="off"
             tabIndex={-1}
             aria-hidden="true"
-            style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px" }}
+            className="hidden"
           />
 
           {fields.length === 0 && (
@@ -311,7 +309,7 @@ export function PublicFormPage({ form, fields, slug, password, theme }: PublicFo
                 {submit.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  form.submitLabel ?? "Submit"
+                  (form.submitLabel ?? "Submit")
                 )}
               </button>
             </div>

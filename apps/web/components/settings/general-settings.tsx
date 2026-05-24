@@ -18,20 +18,59 @@ type FormData = RouterOutputs["forms"]["get"]["form"];
 // ── Emoji picker ──────────────────────────────────────────────────────────────
 
 const COMMON_EMOJI = [
-  "📝","📋","📄","📊","📈","📉","🔍","🎯","✨","⭐",
-  "💡","🚀","🎉","🎁","💬","📧","📱","💻","🌟","🔥",
-  "💯","❤️","🙏","👋","👀","🤝","📌","🗓️","⏰","🏆",
-  "🎨","🌈","🌊","🌿","🦋","🌸","☕","🍀","🎵","🎓",
-  "🛒","💼","🏠","✅","❓","📣","🔔","💎","🌍","🎯",
+  "📝",
+  "📋",
+  "📄",
+  "📊",
+  "📈",
+  "📉",
+  "🔍",
+  "🎯",
+  "✨",
+  "⭐",
+  "💡",
+  "🚀",
+  "🎉",
+  "🎁",
+  "💬",
+  "📧",
+  "📱",
+  "💻",
+  "🌟",
+  "🔥",
+  "💯",
+  "❤️",
+  "🙏",
+  "👋",
+  "👀",
+  "🤝",
+  "📌",
+  "🗓️",
+  "⏰",
+  "🏆",
+  "🎨",
+  "🌈",
+  "🌊",
+  "🌿",
+  "🦋",
+  "🌸",
+  "☕",
+  "🍀",
+  "🎵",
+  "🎓",
+  "🛒",
+  "💼",
+  "🏠",
+  "✅",
+  "❓",
+  "📣",
+  "🔔",
+  "💎",
+  "🌍",
+  "🎯",
 ];
 
-function EmojiPicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (e: string) => void;
-}) {
+function EmojiPicker({ value, onChange }: { value: string; onChange: (e: string) => void }) {
   const [open, setOpen] = useState(false);
   const [custom, setCustom] = useState("");
 
@@ -185,10 +224,7 @@ export function GeneralSettings({ form }: GeneralSettingsProps) {
     });
   }
 
-  const publicUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/f/${slugValue || "…"}`
-      : `/f/${slugValue || "…"}`;
+  const publicPath = `/f/${slugValue || "…"}`;
 
   return (
     <SettingsSection
@@ -199,10 +235,7 @@ export function GeneralSettings({ form }: GeneralSettingsProps) {
       saveState={saveState}
     >
       {/* Slug */}
-      <SettingsRow
-        label="Public URL slug"
-        description="Lowercase letters, numbers, hyphens only"
-      >
+      <SettingsRow label="Public URL slug" description="Lowercase letters, numbers, hyphens only">
         <div className="flex items-center overflow-hidden rounded-lg border border-[#e0d8cc] bg-white focus-within:border-[#c9a83c] focus-within:ring-2 focus-within:ring-[#f4c95d]/30">
           <span className="border-r border-[#e0d8cc] bg-[#f5f0e8] px-3 py-2 text-xs text-[#7a7060] select-none">
             /f/
@@ -216,7 +249,7 @@ export function GeneralSettings({ form }: GeneralSettingsProps) {
         {errors.slug ? (
           <p className="mt-1.5 text-xs text-red-500">{errors.slug.message}</p>
         ) : (
-          <p className="mt-1.5 truncate text-xs text-[#9a9080]">{publicUrl}</p>
+          <p className="mt-1.5 truncate text-xs text-[#9a9080]">{publicPath}</p>
         )}
       </SettingsRow>
 

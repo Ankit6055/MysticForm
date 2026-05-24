@@ -6,5 +6,5 @@ interface FormPageProps {
 
 export default async function FormPage({ params }: FormPageProps) {
   const { id } = await params;
-  redirect(`/dashboard/forms/${id}/edit`);
+  redirect(`/forms/${id}/edit`);
 }

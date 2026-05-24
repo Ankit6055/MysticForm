@@ -7,6 +7,7 @@ import {
   eq,
   ilike,
   ne,
+  or,
 } from "@repo/database";
 import {
   formFieldsTable,
@@ -217,7 +218,7 @@ class FormService {
   }
 
   public async clone(ownerId: string, id: string) {
-    const { form, fields } = await this.get(ownerId, id);
+    const { form, fields } = await this.getCloneSource(ownerId, id);
     const slug = await this.generateCopySlug(form.slug);
 
     return db.transaction(async (tx) => {
@@ -340,6 +341,30 @@ class FormService {
 
     if (!form) throw new FormServiceError("NOT_FOUND", "Form not found");
     return form;
+  }
+
+  private async getCloneSource(ownerId: string, id: string) {
+    const [form] = await db
+      .select()
+      .from(formsTable)
+      .where(
+        and(
+          eq(formsTable.id, id),
+          or(
+            eq(formsTable.ownerId, ownerId),
+            and(
+              eq(formsTable.isTemplate, true),
+              eq(formsTable.visibility, "public"),
+              eq(formsTable.status, "active"),
+            ),
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!form) throw new FormServiceError("NOT_FOUND", "Form not found");
+    const fields = await this.getFields(form.id);
+    return { form, fields };
   }
 
   private async getFields(formId: string) {

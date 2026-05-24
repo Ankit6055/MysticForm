@@ -41,7 +41,12 @@ import { FieldCard } from "./field-card";
 import type { BuilderField, BuilderAction } from "~/hooks/use-form-builder";
 import type { FieldType } from "@repo/schemas";
 
-const FIELD_TYPES: Array<{ type: FieldType; label: string; icon: React.ElementType; color: string }> = [
+const FIELD_TYPES: Array<{
+  type: FieldType;
+  label: string;
+  icon: React.ElementType;
+  color: string;
+}> = [
   { type: "short_text", label: "Short text", icon: Type, color: "#60a5fa" },
   { type: "long_text", label: "Long text", icon: AlignLeft, color: "#34d399" },
   { type: "email", label: "Email", icon: Mail, color: "#f472b6" },
@@ -56,12 +61,11 @@ const FIELD_TYPES: Array<{ type: FieldType; label: string; icon: React.ElementTy
 
 interface SortableFieldCardProps {
   field: BuilderField;
-  index: number;
   isSelected: boolean;
   dispatch: React.Dispatch<BuilderAction>;
 }
 
-function SortableFieldCard({ field, index, isSelected, dispatch }: SortableFieldCardProps) {
+function SortableFieldCard({ field, isSelected, dispatch }: SortableFieldCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: field.id,
   });
@@ -71,7 +75,6 @@ function SortableFieldCard({ field, index, isSelected, dispatch }: SortableField
     <div ref={setNodeRef} style={style} {...attributes}>
       <FieldCard
         field={field}
-        index={index}
         isSelected={isSelected}
         isDragging={isDragging}
         dragHandleProps={listeners}
@@ -114,14 +117,18 @@ export function FieldList({ fields, selectedFieldId, dispatch, onDragEnd }: Fiel
             <p className="text-xs text-[#3a3830]">Add your first field below</p>
           </div>
         ) : (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <DndContext
+            id="builder-field-list"
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd}
+          >
             <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-1.5">
-                {fields.map((field, i) => (
+                {fields.map((field) => (
                   <SortableFieldCard
                     key={field.id}
                     field={field}
-                    index={i}
                     isSelected={field.id === selectedFieldId}
                     dispatch={dispatch}
                   />
@@ -151,7 +158,6 @@ export function FieldList({ fields, selectedFieldId, dispatch, onDragEnd }: Fiel
           >
             {FIELD_TYPES.map((ft, i) => {
               const Icon = ft.icon;
-              const isLast = i === FIELD_TYPES.length - 1;
               const showSep = i === 3 || i === 7;
               return (
                 <div key={ft.type}>

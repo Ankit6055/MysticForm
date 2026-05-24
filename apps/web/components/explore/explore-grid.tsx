@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Search, X, Loader2, FileQuestion } from "lucide-react";
 import { trpc } from "~/trpc/client";
 import { cn } from "~/lib/utils";
@@ -39,14 +39,8 @@ function EmptyState({ q, theme }: { q: string; theme: string }) {
   );
 }
 
-export function ExploreGrid({
-  initialItems,
-  themes,
-  initialQ,
-  initialTheme,
-}: ExploreGridProps) {
+export function ExploreGrid({ initialItems, themes, initialQ, initialTheme }: ExploreGridProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [q, setQ] = useState(initialQ);
   const [activeTheme, setActiveTheme] = useState(initialTheme);
@@ -100,9 +94,12 @@ export function ExploreGrid({
 
   // Debounce search; instant for theme
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchResults(q, activeTheme);
-    }, q ? 300 : 0);
+    const timer = setTimeout(
+      () => {
+        fetchResults(q, activeTheme);
+      },
+      q ? 300 : 0,
+    );
     return () => clearTimeout(timer);
   }, [q, activeTheme, fetchResults]);
 
@@ -177,15 +174,14 @@ export function ExploreGrid({
                       ? "border-transparent text-white shadow-sm"
                       : "border-[#e8e0d4] bg-white text-[#5f5a4e] hover:border-[#c8bfb0]",
                   )}
-                  style={
-                    isActive
-                      ? { backgroundColor: theme.tokens.accent }
-                      : {}
-                  }
+                  style={isActive ? { backgroundColor: theme.tokens.accent } : {}}
                 >
                   <span
                     className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: isActive ? "white" : theme.tokens.accent, opacity: isActive ? 0.7 : 1 }}
+                    style={{
+                      backgroundColor: isActive ? "white" : theme.tokens.accent,
+                      opacity: isActive ? 0.7 : 1,
+                    }}
                   />
                   {theme.name}
                 </button>
@@ -234,11 +230,7 @@ export function ExploreGrid({
                 disabled={isLoadingMore}
                 className="flex items-center gap-2 rounded-xl border border-[#e0d8cc] bg-white px-6 py-2.5 text-sm font-medium text-[#3a3428] transition-colors hover:border-[#c8bfb0] hover:bg-[#f5f0e8] disabled:opacity-60"
               >
-                {isLoadingMore ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Load more"
-                )}
+                {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load more"}
               </button>
             </div>
           )}

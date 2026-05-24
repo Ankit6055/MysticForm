@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -56,18 +57,21 @@ export function PublishDialog({ formId, currentVisibility }: PublishDialogProps)
   const router = useRouter();
 
   const publish = trpc.forms.publish.useMutation({
-    onSuccess: () => {
-      toast.success("Form published! 🎉");
+    onSuccess: (form) => {
+      toast.success("Form published");
       setOpen(false);
-      router.push(`/dashboard/forms/${formId}`);
+      setSelected(form.visibility as Visibility);
+      router.refresh();
     },
     onError: (err) => toast.error(err.message ?? "Failed to publish"),
   });
 
   const unpublish = trpc.forms.unpublish.useMutation({
-    onSuccess: () => {
+    onSuccess: (form) => {
       toast.success("Form set back to draft");
       setOpen(false);
+      setSelected(form.visibility as Visibility);
+      router.refresh();
     },
     onError: (err) => toast.error(err.message ?? "Failed to update"),
   });
@@ -85,19 +89,17 @@ export function PublishDialog({ formId, currentVisibility }: PublishDialogProps)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          className="bg-[#0f0e0b] text-[#f4c95d] hover:bg-[#2a2520] gap-1.5"
-        >
+        <Button size="sm" className="bg-[#0f0e0b] text-[#f4c95d] hover:bg-[#2a2520] gap-1.5">
           <Globe className="h-3.5 w-3.5" />
           Publish
         </Button>
       </DialogTrigger>
       <DialogContent className="gap-0 rounded-2xl border-[#e8e0d4] bg-[#faf9f6] p-0 shadow-2xl sm:max-w-md">
         <DialogHeader className="border-b border-[#e8e0d4] px-6 py-5">
-          <DialogTitle className="text-base font-semibold text-[#1a1812]">
-            Publish form
-          </DialogTitle>
+          <DialogTitle className="text-base font-semibold text-[#1a1812]">Publish form</DialogTitle>
+          <DialogDescription className="text-xs text-[#7a7060]">
+            Choose whether this form appears in public discovery or only works by direct link.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2 p-5">

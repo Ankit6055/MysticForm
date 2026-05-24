@@ -4,6 +4,8 @@ const links = [
   { href: "/explore", label: "Explore" },
   { href: "/pricing", label: "Pricing" },
   { href: "/login", label: "Log in" },
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
   { href: "https://github.com/piyushgarg-dev/trpc-monorepo", label: "GitHub" },
 ];
 

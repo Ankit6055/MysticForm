@@ -1,135 +1,98 @@
-# Turborepo starter
+# MysticForm
 
-This Turborepo starter is maintained by the Turborepo core team.
+MysticForm is a Typeform-style form builder SaaS built for a solo hackathon submission. It includes creator authentication, dynamic form fields, public and unlisted publishing, template cloning, response management, CSV export, analytics, public discovery, password protection, response limits, expiry, rate limiting, honeypot spam protection, and Scalar API docs.
 
-## Using this example
+## Demo
 
-Run the following command:
+- Web app: `http://localhost:3000`
+- API docs: `http://localhost:8000/docs`
+- Demo email: `demo@mysticform.app`
+- Demo password: `mysticform-demo-2026`
 
-```sh
-npx create-turbo@latest
-```
+Run `pnpm db:seed` to create the demo user, 8 themes, 6 sample forms, 4 templates, and analytics-ready responses.
 
-## What's inside?
+## Stack
 
-This Turborepo includes the following packages/apps:
+- Turborepo + pnpm workspaces
+- Next.js 16 App Router in `apps/web`
+- Express + tRPC in `apps/api`
+- Drizzle ORM + Postgres
+- Zod schemas shared across client and server
+- shadcn/ui + Tailwind CSS v4
+- Scalar API reference at `/docs`
 
-### Apps and Packages
+## Local Setup
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+1. Install dependencies:
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+   ```sh
+   pnpm install
+   ```
 
-### Utilities
+2. Copy environment variables:
 
-This Turborepo has some additional tools already setup for you:
+   ```sh
+   cp .env.example .env
+   cp .env.example .env.local
+   ```
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+3. Start Postgres:
 
-### Build
+   ```sh
+   docker compose up -d
+   ```
 
-To build all apps and packages, run the following command:
+4. Run migrations:
 
-```
-cd my-turborepo
+   ```sh
+   pnpm db:migrate
+   ```
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+5. Seed demo content:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+   ```sh
+   pnpm db:seed
+   ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+6. Start the web and API apps:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+   ```sh
+   pnpm dev
+   ```
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## Scripts
 
-### Develop
+- `pnpm dev` - run web and API in development
+- `pnpm check-types` - generate Next route types and run TypeScript checks
+- `pnpm lint` - run workspace lint tasks
+- `pnpm db:migrate` - apply Drizzle migrations
+- `pnpm db:generate` - generate Drizzle migrations
+- `pnpm db:seed` - seed demo themes, forms, responses, and credentials
 
-To develop all apps and packages, run the following command:
+## Product Walkthrough
 
-```
-cd my-turborepo
+1. Sign in with the demo credentials or create a new account.
+2. Use **Templates** to clone a starter form, or create a blank form from **Forms**.
+3. Add fields in the builder, preview the form, then publish as public or unlisted.
+4. Share `/f/[slug]` with respondents.
+5. Review submissions in **Responses**, export CSV, and inspect charts in **Analytics**.
+6. Use **Explore** to browse public seeded forms. Unlisted forms stay accessible only by direct link.
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+## Environment Variables
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+See `.env.example` for the full local set. Important values:
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+- `DATABASE_URL` - Postgres connection string
+- `PORT` - API port, usually `8000`
+- `WEB_URL` - web origin, usually `http://localhost:3000`
+- `API_URL` - tRPC server URL for server-side web calls
+- `NEXT_PUBLIC_API_URL` - tRPC URL for browser calls
+- `JWT_SECRET` - session signing secret
+- `IP_HASH_SALT` - salt for hashed IP abuse checks
+- `NEXT_PUBLIC_DEMO_EMAIL` / `NEXT_PUBLIC_DEMO_PASSWORD` - optional values used by local demo docs and seed defaults
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+## Notes
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+- Rate limiting is in memory, which is acceptable for the local and hackathon demo path but should move to Redis or another shared store for multi-instance production.
+- Email notification plumbing is still scoped as a follow-up unless a real Resend key and verified sender domain are provided.
+- The demo seed is idempotent for the seeded demo user and seeded form slugs; it does not delete unrelated local users or forms.

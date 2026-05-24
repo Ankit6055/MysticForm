@@ -13,6 +13,7 @@ import { Input } from "~/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -46,7 +47,7 @@ export function NewFormDialog() {
     onSuccess: (form) => {
       setOpen(false);
       reset();
-      router.push(`/dashboard/forms/${form.id}/edit`);
+      router.push(`/forms/${form.id}/edit`);
     },
     onError: (err) => {
       if (err.data?.code === "CONFLICT") {
@@ -84,14 +85,14 @@ export function NewFormDialog() {
           <DialogTitle className="text-base font-semibold text-[#1a1812]">
             Create a new form
           </DialogTitle>
+          <DialogDescription className="text-xs text-[#7a7060]">
+            Name your form and optionally reserve a public URL slug.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-6 py-5">
           <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-[#3a3428] mb-1.5"
-            >
+            <label htmlFor="title" className="block text-sm font-medium text-[#3a3428] mb-1.5">
               Form title <span className="text-red-500">*</span>
             </label>
             <Input
@@ -102,18 +103,12 @@ export function NewFormDialog() {
               aria-invalid={!!errors.title}
               {...register("title")}
             />
-            {errors.title && (
-              <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>
-            )}
+            {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>}
           </div>
 
           <div>
-            <label
-              htmlFor="slug"
-              className="block text-sm font-medium text-[#3a3428] mb-1.5"
-            >
-              Custom URL slug{" "}
-              <span className="text-xs font-normal text-[#9a9080]">(optional)</span>
+            <label htmlFor="slug" className="block text-sm font-medium text-[#3a3428] mb-1.5">
+              Custom URL slug <span className="text-xs font-normal text-[#9a9080]">(optional)</span>
             </label>
             <div className="flex items-center gap-0 overflow-hidden rounded-md border border-[#e0d8cc] bg-white focus-within:border-[#c9a83c] focus-within:ring-2 focus-within:ring-[#f4c95d]/30">
               <span className="border-r border-[#e0d8cc] bg-[#f5f0e8] px-3 py-2 text-xs text-[#7a7060] select-none">
@@ -126,9 +121,7 @@ export function NewFormDialog() {
                 {...register("slug")}
               />
             </div>
-            {errors.slug && (
-              <p className="mt-1 text-xs text-red-500">{errors.slug.message}</p>
-            )}
+            {errors.slug && <p className="mt-1 text-xs text-red-500">{errors.slug.message}</p>}
             <p className="mt-1 text-xs text-[#9a9080]">
               Left blank, a slug will be generated automatically.
             </p>
@@ -150,11 +143,7 @@ export function NewFormDialog() {
               className="bg-[#0f0e0b] text-[#f4c95d] hover:bg-[#2a2520] disabled:opacity-70"
               size="sm"
             >
-              {create.isPending ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                "Create form"
-              )}
+              {create.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Create form"}
             </Button>
           </div>
         </form>

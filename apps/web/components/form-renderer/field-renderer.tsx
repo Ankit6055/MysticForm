@@ -1,6 +1,4 @@
 "use client";
-
-import { useState } from "react";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -27,8 +25,43 @@ type Option = { value: string; label: string };
 
 export function FieldRenderer({ field, value, onChange, error }: FieldRendererProps) {
   const { type, label, helpText, required, config } = field;
+  const controlId = `field-control-${field.id}`;
+  const helpId = helpText ? `field-help-${field.id}` : undefined;
+  const errorId = error ? `field-error-${field.id}` : undefined;
+  const describedBy = [helpId, errorId].filter(Boolean).join(" ") || undefined;
 
-  function wrap(children: React.ReactNode) {
+  function wrap(children: React.ReactNode, htmlFor?: string) {
+    return (
+      <div className="space-y-2">
+        <div className="space-y-0.5">
+          {htmlFor ? (
+            <Label htmlFor={htmlFor} className="text-base font-medium text-[#1a1812]">
+              {label}
+              {required && <span className="ml-1 text-red-500">*</span>}
+            </Label>
+          ) : (
+            <p className="text-base font-medium text-[#1a1812]">
+              {label}
+              {required && <span className="ml-1 text-red-500">*</span>}
+            </p>
+          )}
+          {helpText && (
+            <p id={helpId} className="text-sm text-[#7a7060]">
+              {helpText}
+            </p>
+          )}
+        </div>
+        {children}
+        {error && (
+          <p id={errorId} className="text-xs text-red-500">
+            {error}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  function legacyWrap(children: React.ReactNode) {
     return (
       <div className="space-y-2">
         <div className="space-y-0.5">
@@ -36,10 +69,18 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
             {label}
             {required && <span className="ml-1 text-red-500">*</span>}
           </p>
-          {helpText && <p className="text-sm text-[#7a7060]">{helpText}</p>}
+          {helpText && (
+            <p id={helpId} className="text-sm text-[#7a7060]">
+              {helpText}
+            </p>
+          )}
         </div>
         {children}
-        {error && <p className="text-xs text-red-500">{error}</p>}
+        {error && (
+          <p id={errorId} className="text-xs text-red-500">
+            {error}
+          </p>
+        )}
       </div>
     );
   }
@@ -47,29 +88,38 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
   if (type === "short_text" || type === "email") {
     return wrap(
       <Input
+        id={controlId}
         type={type === "email" ? "email" : "text"}
         placeholder={(config.placeholder as string) ?? ""}
         value={(value as string) ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className="border-[#e0d8cc] bg-white focus-visible:border-[#c9a83c] focus-visible:ring-[#f4c95d]/30"
       />,
+      controlId,
     );
   }
 
   if (type === "long_text") {
     return wrap(
       <Textarea
+        id={controlId}
         placeholder={(config.placeholder as string) ?? ""}
         value={(value as string) ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className="min-h-24 border-[#e0d8cc] bg-white focus-visible:border-[#c9a83c] focus-visible:ring-[#f4c95d]/30"
       />,
+      controlId,
     );
   }
 
   if (type === "number") {
     return wrap(
       <Input
+        id={controlId}
         type="number"
         placeholder={(config.placeholder as string) ?? ""}
         value={(value as string) ?? ""}
@@ -77,21 +127,28 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
         max={config.max as number | undefined}
         step={config.step as number | undefined}
         onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className="border-[#e0d8cc] bg-white focus-visible:border-[#c9a83c] focus-visible:ring-[#f4c95d]/30"
       />,
+      controlId,
     );
   }
 
   if (type === "date") {
     return wrap(
       <Input
+        id={controlId}
         type="date"
         value={(value as string) ?? ""}
         min={config.min as string | undefined}
         max={config.max as string | undefined}
         onChange={(e) => onChange(e.target.value)}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className="border-[#e0d8cc] bg-white focus-visible:border-[#c9a83c] focus-visible:ring-[#f4c95d]/30"
       />,
+      controlId,
     );
   }
 
@@ -99,27 +156,42 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
     return (
       <div className="flex items-start gap-3">
         <Checkbox
-          id={field.id}
+          id={controlId}
           checked={(value as boolean) ?? false}
           onCheckedChange={(checked) => onChange(!!checked)}
+          aria-invalid={!!error}
+          aria-describedby={describedBy}
           className="mt-0.5 border-[#c8bfb0] data-[state=checked]:border-[#c9a83c] data-[state=checked]:bg-[#c9a83c]"
         />
-        <label htmlFor={field.id} className="cursor-pointer text-sm text-[#3a3428] leading-relaxed">
+        <label
+          htmlFor={controlId}
+          className="cursor-pointer text-sm text-[#3a3428] leading-relaxed"
+        >
           {label}
           {required && <span className="ml-1 text-red-500">*</span>}
-          {helpText && <span className="ml-1 text-[#9a9080]">— {helpText}</span>}
+          {helpText && (
+            <span id={helpId} className="ml-1 text-[#9a9080]">
+              — {helpText}
+            </span>
+          )}
         </label>
-        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+        {error && (
+          <p id={errorId} className="mt-1 text-xs text-red-500">
+            {error}
+          </p>
+        )}
       </div>
     );
   }
 
   if (type === "single_select") {
     const options = (config.options as Option[]) ?? [];
-    return wrap(
+    return legacyWrap(
       <RadioGroup
         value={(value as string) ?? ""}
         onValueChange={onChange}
+        aria-invalid={!!error}
+        aria-describedby={describedBy}
         className="gap-2"
       >
         {options.map((opt) => (
@@ -144,18 +216,17 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
   if (type === "multi_select") {
     const options = (config.options as Option[]) ?? [];
     const selected = (value as string[]) ?? [];
-    return wrap(
+    return legacyWrap(
       <div className="space-y-2">
         {options.map((opt) => (
           <div key={opt.value} className="flex items-center gap-3">
             <Checkbox
               id={`${field.id}-${opt.value}`}
               checked={selected.includes(opt.value)}
+              aria-describedby={describedBy}
               onCheckedChange={(checked) => {
                 onChange(
-                  checked
-                    ? [...selected, opt.value]
-                    : selected.filter((v) => v !== opt.value),
+                  checked ? [...selected, opt.value] : selected.filter((v) => v !== opt.value),
                 );
               }}
               className="border-[#c8bfb0] data-[state=checked]:border-[#c9a83c] data-[state=checked]:bg-[#c9a83c]"
@@ -176,7 +247,12 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
     const options = (config.options as Option[]) ?? [];
     return wrap(
       <Select value={(value as string) ?? ""} onValueChange={onChange}>
-        <SelectTrigger className="w-full border-[#e0d8cc] bg-white focus:border-[#c9a83c] focus:ring-[#f4c95d]/30">
+        <SelectTrigger
+          id={controlId}
+          aria-invalid={!!error}
+          aria-describedby={describedBy}
+          className="w-full border-[#e0d8cc] bg-white focus:border-[#c9a83c] focus:ring-[#f4c95d]/30"
+        >
           <SelectValue placeholder="Select an option…" />
         </SelectTrigger>
         <SelectContent>
@@ -187,6 +263,7 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
           ))}
         </SelectContent>
       </Select>,
+      controlId,
     );
   }
 
@@ -198,16 +275,18 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
     const icons: Record<string, (filled: boolean) => string> = {
       star: (f) => (f ? "★" : "☆"),
       heart: (f) => (f ? "♥" : "♡"),
-      thumb: (_f) => "👍",
+      thumb: () => "👍",
     };
 
-    return wrap(
+    return legacyWrap(
       <div className="flex gap-1">
         {Array.from({ length: scale }, (_, i) => i + 1).map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => onChange(n === current ? 0 : n)}
+            aria-label={`${n} out of ${scale}`}
+            aria-pressed={n <= current}
             className={cn(
               "text-2xl transition-transform hover:scale-110 focus:outline-none",
               n <= current ? "text-[#f4c95d]" : "text-[#d8d0c4]",

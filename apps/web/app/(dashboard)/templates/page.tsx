@@ -4,7 +4,7 @@ import { api } from "~/trpc/server";
 import { TemplateCard } from "~/components/explore/public-form-card";
 
 async function TemplateGrid() {
-  const items = await api.explore.featured.query({ limit: 50 }).catch(() => []);
+  const items = await api.explore.templates.query({ limit: 50 }).catch(() => []);
 
   if (items.length === 0) {
     return (

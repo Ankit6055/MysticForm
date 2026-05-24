@@ -17,7 +17,7 @@ interface FormShellNavProps {
 
 export function FormShellNav({ formId }: FormShellNavProps) {
   const pathname = usePathname();
-  const base = `/dashboard/forms/${formId}`;
+  const base = `/forms/${formId}`;
 
   return (
     <nav className="flex gap-0 border-b border-[#e8e0d4] bg-[#faf9f6] px-6">

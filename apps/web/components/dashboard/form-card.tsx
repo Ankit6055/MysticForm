@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import {
   MoreHorizontal,
@@ -105,7 +106,7 @@ export function FormCard({ item }: FormCardProps) {
     : null;
 
   return (
-    <div
+    <article
       className={cn(
         "group relative flex flex-col rounded-2xl border bg-[#faf9f6] p-5 transition-all duration-200",
         "border-[#e8e0d4] hover:border-[#c8bfb0] hover:shadow-[0_4px_24px_0_rgba(26,24,18,0.08)] hover:-translate-y-0.5",
@@ -128,7 +129,13 @@ export function FormCard({ item }: FormCardProps) {
 
       {/* Title */}
       <h3 className="mb-1 line-clamp-2 text-sm font-semibold leading-snug text-[#1a1812] flex-1">
-        {form.title}
+        <Link
+          href={`/forms/${form.id}/edit`}
+          className="rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#f4c95d]/60"
+        >
+          <span className="absolute inset-0" aria-hidden="true" />
+          {form.title}
+        </Link>
       </h3>
 
       {/* Stats */}
@@ -146,12 +153,13 @@ export function FormCard({ item }: FormCardProps) {
       </div>
 
       {/* Kebab menu — appears on hover */}
-      <div className="absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="absolute right-3 top-3 z-10 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon-sm"
+              aria-label={`Open actions for ${form.title}`}
               className="h-7 w-7 rounded-lg bg-white/80 text-[#7a7060] shadow-sm backdrop-blur-sm hover:bg-white hover:text-[#1a1812]"
             >
               <MoreHorizontal className="h-4 w-4" />
@@ -163,14 +171,14 @@ export function FormCard({ item }: FormCardProps) {
           >
             <DropdownMenuItem
               className="gap-2 text-[#3a3428] focus:bg-[#ede8de] focus:text-[#1a1812] cursor-pointer"
-              onSelect={() => router.push(`/dashboard/forms/${form.id}/edit`)}
+              onSelect={() => router.push(`/forms/${form.id}/edit`)}
             >
               <Pencil className="h-3.5 w-3.5" />
               Open builder
             </DropdownMenuItem>
             <DropdownMenuItem
               className="gap-2 text-[#3a3428] focus:bg-[#ede8de] focus:text-[#1a1812] cursor-pointer"
-              onSelect={() => router.push(`/dashboard/forms/${form.id}/responses`)}
+              onSelect={() => router.push(`/forms/${form.id}/responses`)}
             >
               <MessageSquare className="h-3.5 w-3.5" />
               View responses
@@ -199,9 +207,7 @@ export function FormCard({ item }: FormCardProps) {
             <DropdownMenuItem
               className="gap-2 text-[#3a3428] focus:bg-[#ede8de] focus:text-[#1a1812] cursor-pointer"
               onSelect={() =>
-                isArchived
-                  ? unarchive.mutate({ id: form.id })
-                  : archive.mutate({ id: form.id })
+                isArchived ? unarchive.mutate({ id: form.id }) : archive.mutate({ id: form.id })
               }
             >
               {isArchived ? (
@@ -226,6 +232,6 @@ export function FormCard({ item }: FormCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </article>
   );
 }

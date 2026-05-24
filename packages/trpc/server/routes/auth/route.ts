@@ -70,7 +70,7 @@ export const authRouter = router({
     }),
   signOut: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/signout"), tags: TAGS } })
-    .input(zodUndefinedModel)
+    .input(z.object({}).passthrough())
     .output(z.object({ success: z.literal(true) }))
     .mutation(({ ctx }) => {
       ctx.clearSessionCookie();

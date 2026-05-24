@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -62,6 +63,9 @@ function DeleteDialog({ form }: { form: FormData }) {
           <DialogTitle className="text-base font-semibold text-red-700">
             Delete form permanently
           </DialogTitle>
+          <DialogDescription className="text-xs text-red-700/80">
+            Confirm the exact form title before deleting the form and its responses.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="px-6 py-5 space-y-4">
@@ -163,9 +167,7 @@ export function DangerSettings({ form }: DangerSettingsProps) {
           variant="outline"
           disabled={isPending}
           onClick={() =>
-            isArchived
-              ? unarchive.mutate({ id: form.id })
-              : archive.mutate({ id: form.id })
+            isArchived ? unarchive.mutate({ id: form.id }) : archive.mutate({ id: form.id })
           }
           className="shrink-0 gap-2 border-amber-200 bg-white text-amber-700 hover:bg-amber-50 hover:border-amber-300"
         >

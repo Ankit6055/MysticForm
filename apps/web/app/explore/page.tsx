@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { api } from "~/trpc/server";
@@ -37,7 +36,14 @@ export default async function ExplorePage({ searchParams }: PageProps) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <pattern id="explore-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+            <pattern
+              id="explore-dots"
+              x="0"
+              y="0"
+              width="24"
+              height="24"
+              patternUnits="userSpaceOnUse"
+            >
               <circle cx="1.5" cy="1.5" r="1.5" fill="#f4c95d" />
             </pattern>
           </defs>
@@ -58,8 +64,8 @@ export default async function ExplorePage({ searchParams }: PageProps) {
               Explore forms
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#8a8070]">
-              Discover public forms created by the MysticForm community. Filter by theme,
-              search by topic, or get inspired by what others have built.
+              Discover public forms created by the MysticForm community. Filter by theme, search by
+              topic, or get inspired by what others have built.
             </p>
           </div>
         </div>

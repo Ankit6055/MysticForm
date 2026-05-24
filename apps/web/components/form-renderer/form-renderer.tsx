@@ -105,15 +105,12 @@ export function FormRenderer({
 
         {fields.length > 0 && (
           <div className="pt-4">
-            <Button
-              type="submit"
-              className="bg-[#0f0e0b] text-[#f4c95d] hover:bg-[#2a2520] px-8"
-            >
+            <Button type="submit" className="bg-[#0f0e0b] text-[#f4c95d] hover:bg-[#2a2520] px-8">
               {submitLabel ?? "Submit"}
             </Button>
             {isPreview && (
               <p className="mt-3 text-xs text-[#9a9080]">
-                Preview mode — responses won't be saved.
+                Preview mode — responses won&apos;t be saved.
               </p>
             )}
           </div>

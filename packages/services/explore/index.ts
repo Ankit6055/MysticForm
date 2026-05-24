@@ -51,6 +51,10 @@ class ExploreService {
     return this.listPublicForms(input);
   }
 
+  public async templates(input: ExploreInput) {
+    return this.listPublicForms(input, eq(formsTable.isTemplate, true));
+  }
+
   public async byTheme(input: ExploreByThemeInput) {
     return this.listPublicForms(input, eq(themesTable.slug, input.themeSlug));
   }

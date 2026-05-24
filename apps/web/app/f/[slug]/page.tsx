@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Clock, AlertCircle, Sparkles } from "lucide-react";
+import { Clock, Sparkles } from "lucide-react";
 import { api } from "~/trpc/server";
 import { PublicFormPage } from "./public-form-page";
 import { PasswordPrompt } from "./password-prompt";
@@ -12,40 +12,13 @@ interface PageProps {
 
 // ── Error screens (server-rendered) ──────────────────────────────────────────
 
-function FormNotAvailable() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#f5f2ec] px-6 text-center">
-      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebe0]">
-        <AlertCircle className="h-7 w-7 text-[#7a7060]" />
-      </div>
-      <h1 className="text-2xl font-semibold text-[#1a1812]">Form not available</h1>
-      <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#7a7060]">
-        This form doesn&apos;t exist or has been removed by its creator.
-      </p>
-      <div className="mt-8 flex flex-col items-center gap-3">
-        <Link
-          href="/explore"
-          className="rounded-xl bg-[#0f0e0b] px-6 py-2.5 text-sm font-semibold text-[#f4c95d] transition-opacity hover:opacity-90"
-        >
-          Explore other forms
-        </Link>
-        <Link href="/" className="text-sm text-[#9a9080] underline underline-offset-2 hover:text-[#1a1812]">
-          ← Back to MysticForm
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 function FormClosed() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#f5f2ec] px-6 text-center">
       <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0ebe0]">
         <Clock className="h-7 w-7 text-[#7a7060]" />
       </div>
-      <h1 className="text-2xl font-semibold text-[#1a1812]">
-        No longer accepting responses
-      </h1>
+      <h1 className="text-2xl font-semibold text-[#1a1812]">No longer accepting responses</h1>
       <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#7a7060]">
         This form has reached its response limit or has expired.
       </p>
@@ -98,7 +71,7 @@ export default async function PublicFormRoute({ params }: PageProps) {
       case "NOT_FOUND":
         errorState = "not_found";
         break;
-      case "FORBIDDEN":
+      case "UNAUTHORIZED":
         // Could be wrong password or password required
         errorState = "password_required";
         break;
@@ -144,12 +117,5 @@ export default async function PublicFormRoute({ params }: PageProps) {
     }
   }
 
-  return (
-    <PublicFormPage
-      form={form}
-      fields={fields}
-      slug={slug}
-      theme={theme}
-    />
-  );
+  return <PublicFormPage form={form} fields={fields} slug={slug} theme={theme} />;
 }

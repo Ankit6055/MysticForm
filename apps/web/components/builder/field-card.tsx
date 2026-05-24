@@ -43,7 +43,6 @@ const FIELD_META: Record<FieldType, { icon: React.ElementType; label: string; co
 
 interface FieldCardProps {
   field: BuilderField;
-  index: number;
   isSelected: boolean;
   isDragging?: boolean;
   dragHandleProps?: Record<string, unknown>;
@@ -54,7 +53,6 @@ interface FieldCardProps {
 
 export function FieldCard({
   field,
-  index,
   isSelected,
   isDragging,
   dragHandleProps,

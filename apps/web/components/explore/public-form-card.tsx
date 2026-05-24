@@ -109,7 +109,7 @@ export function TemplateCard({ item }: { item: ExploreCard }) {
   const clone = trpc.forms.clone.useMutation({
     onSuccess: (form) => {
       toast.success("Template cloned! Opening builder…");
-      router.push(`/dashboard/forms/${form.id}/edit`);
+      router.push(`/forms/${form.id}/edit`);
     },
     onError: (err) => toast.error(err.message ?? "Failed to clone template"),
   });

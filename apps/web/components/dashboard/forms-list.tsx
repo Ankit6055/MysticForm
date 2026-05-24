@@ -2,15 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, FileQuestion } from "lucide-react";
+import { Search } from "lucide-react";
 import { trpc } from "~/trpc/client";
 import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
 import { NewFormDialog } from "~/components/dashboard/new-form-dialog";
 import { FormCard } from "~/components/dashboard/form-card";
 import { cn } from "~/lib/utils";
 
-function EmptyState({ onNew }: { onNew: () => void }) {
+function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       {/* Hand-crafted illustration */}
@@ -26,19 +25,40 @@ function EmptyState({ onNew }: { onNew: () => void }) {
           {/* Document shadow */}
           <rect x="22" y="18" width="76" height="72" rx="8" fill="#e8e0d4" />
           {/* Document body */}
-          <rect x="18" y="14" width="76" height="72" rx="8" fill="#faf9f6" stroke="#e0d8cc" strokeWidth="1.5" />
+          <rect
+            x="18"
+            y="14"
+            width="76"
+            height="72"
+            rx="8"
+            fill="#faf9f6"
+            stroke="#e0d8cc"
+            strokeWidth="1.5"
+          />
           {/* Lines */}
           <rect x="32" y="28" width="48" height="4" rx="2" fill="#e0d8cc" />
           <rect x="32" y="38" width="36" height="4" rx="2" fill="#ede8de" />
           <rect x="32" y="48" width="44" height="4" rx="2" fill="#ede8de" />
           <rect x="32" y="58" width="30" height="4" rx="2" fill="#ede8de" />
           {/* Sparkle top-right */}
-          <path d="M96 8 L97.5 12 L102 13.5 L97.5 15 L96 19 L94.5 15 L90 13.5 L94.5 12 Z" fill="#f4c95d" />
+          <path
+            d="M96 8 L97.5 12 L102 13.5 L97.5 15 L96 19 L94.5 15 L90 13.5 L94.5 12 Z"
+            fill="#f4c95d"
+          />
           {/* Small sparkle */}
-          <path d="M108 20 L108.8 22.4 L111.2 23.2 L108.8 24 L108 26.4 L107.2 24 L104.8 23.2 L107.2 22.4 Z" fill="#f4c95d" opacity="0.6" />
+          <path
+            d="M108 20 L108.8 22.4 L111.2 23.2 L108.8 24 L108 26.4 L107.2 24 L104.8 23.2 L107.2 22.4 Z"
+            fill="#f4c95d"
+            opacity="0.6"
+          />
           {/* Plus circle bottom-right */}
           <circle cx="88" cy="78" r="14" fill="#0f0e0b" />
-          <path d="M88 72 L88 84 M82 78 L94 78" stroke="#f4c95d" strokeWidth="2" strokeLinecap="round" />
+          <path
+            d="M88 72 L88 84 M82 78 L94 78"
+            stroke="#f4c95d"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </svg>
       </div>
 
@@ -149,7 +169,7 @@ export function FormsList({ user }: FormsListProps) {
       {isLoading ? (
         <LoadingSkeleton />
       ) : !data || data.length === 0 ? (
-        <EmptyState onNew={() => {}} />
+        <EmptyState />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {data.map((item) => (
